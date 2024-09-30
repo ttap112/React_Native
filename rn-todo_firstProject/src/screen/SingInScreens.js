@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Keyboard } from 'react-native';
+import { StyleSheet, Text, View, Image, Keyboard, Alert } from 'react-native';
 import Input, {
   KeyboardTypes,
   ReturnKeyTypes,
@@ -12,18 +12,25 @@ const SingInScreen = () => {
   const [password, setPassword] = useState('');
   const passwordRef = useRef(null);
   const [disabled, setDisabled] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setDisabled(!email || !password);
   }, [email, password]);
 
   const onSubmit = async () => {
-    try {
-      Keyboard.dismiss();
-      const data = await signIn(email, password);
-      console.log(data);
-    } catch (error) {
-      console.log(error);
+    if (!isLoading && !disabled) {
+      try {
+        Keyboard.dismiss();
+        const data = await signIn(email, password);
+        console.log(data);
+        setIsLoading(false);
+      } catch (error) {
+        Alert.alert('로그인 실패', error, [
+          { text: '확인', onPress: () => setIsLoading(false) },
+        ]);
+      }
+      setIsLoading(false);
     }
   };
 
@@ -52,7 +59,12 @@ const SingInScreen = () => {
         onSubmitEditing={onSubmit}
       />
       <View style={styles.buttonContainer}>
-        <Button title="로그인" onPress={onSubmit} disabled={disabled} />
+        <Button
+          title="로그인"
+          onPress={onSubmit}
+          disabled={disabled}
+          isLoading={isLoading}
+        />
       </View>
     </View>
   );
