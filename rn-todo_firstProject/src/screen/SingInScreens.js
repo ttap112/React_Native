@@ -1,12 +1,31 @@
-import { StyleSheet, Text, View, Image } from 'react-native';
-import Input, { KeyboardTypes, ReturnKeyTypes } from '../components/input';
-import { useState } from 'react';
-
+import { StyleSheet, Text, View, Image, Keyboard } from 'react-native';
+import Input, {
+  KeyboardTypes,
+  ReturnKeyTypes,
+  IconNames,
+} from '../components/input';
+import { useState, useRef, useEffect } from 'react';
+import Button from '../components/Button';
+import { signIn } from '../api/auth';
 const SingInScreen = () => {
   const [email, setEamil] = useState('');
   const [password, setPassword] = useState('');
+  const passwordRef = useRef(null);
+  const [disabled, setDisabled] = useState(true);
 
-  console.log(email, password);
+  useEffect(() => {
+    setDisabled(!email || !password);
+  }, [email, password]);
+
+  const onSubmit = async () => {
+    try {
+      Keyboard.dismiss();
+      const data = await signIn(email, password);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -18,15 +37,23 @@ const SingInScreen = () => {
         returnKeyType={ReturnKeyTypes.NEXT}
         value={email}
         onChangeText={(email) => setEamil(email.trim())}
+        iconName={IconNames.EMAIL}
+        onSubmitEditing={() => passwordRef.current.focus()}
       />
 
       <Input
+        ref={passwordRef}
         title={'비밀번호'}
         returnKeyType={ReturnKeyTypes.DONE}
         secureTextEntry
         value={password}
         onChangeText={(password) => setPassword(password.trim())}
+        iconName={IconNames.PASSWORD}
+        onSubmitEditing={onSubmit}
       />
+      <View style={styles.buttonContainer}>
+        <Button title="로그인" onPress={onSubmit} disabled={disabled} />
+      </View>
     </View>
   );
 };
