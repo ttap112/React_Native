@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Keyboard, Alert } from 'react-native';
+import { StyleSheet, View, Image, Keyboard, Alert } from 'react-native';
 import Input, {
   KeyboardTypes,
   ReturnKeyTypes,
@@ -7,8 +7,10 @@ import Input, {
 import { useState, useRef, useEffect } from 'react';
 import Button from '../components/Button';
 import { signIn } from '../api/auth';
-const SingInScreen = () => {
-  const [email, setEamil] = useState('');
+import PropTypes from 'prop-types';
+
+const SignInScreen = ({ navigation }) => {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const passwordRef = useRef(null);
   const [disabled, setDisabled] = useState(true);
@@ -25,6 +27,7 @@ const SingInScreen = () => {
         const data = await signIn(email, password);
         console.log(data);
         setIsLoading(false);
+        navigation.navigate('List');
       } catch (error) {
         Alert.alert('로그인 실패', error, [
           { text: '확인', onPress: () => setIsLoading(false) },
@@ -43,7 +46,7 @@ const SingInScreen = () => {
         keyboardType={KeyboardTypes.EMAIL}
         returnKeyType={ReturnKeyTypes.NEXT}
         value={email}
-        onChangeText={(email) => setEamil(email.trim())}
+        onChangeText={(email) => setEmail(email.trim())}
         iconName={IconNames.EMAIL}
         onSubmitEditing={() => passwordRef.current.focus()}
       />
@@ -70,6 +73,10 @@ const SingInScreen = () => {
   );
 };
 
+SignInScreen.propTypes = {
+  navigation: PropTypes.object,
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -82,4 +89,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SingInScreen;
+export default SignInScreen;
