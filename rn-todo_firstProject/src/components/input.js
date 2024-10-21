@@ -1,8 +1,8 @@
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 import PropTypes from 'prop-types';
 import { GARY, PRIMARY, BLACK } from '../colors';
-import { useState, forwardRef } from 'react';
-import { MaterialCommunityIcons } from '@expo/vertoc-icons';
+import { useState } from 'react';
+import { MaterialCommunityIcons } from '@expo/vector-icons'; // 수정
 
 export const KeyboardTypes = {
   DEFAULT: 'default',
@@ -15,7 +15,7 @@ export const ReturnKeyTypes = {
 };
 
 export const IconNames = {
-  EMAIL: 'eamil',
+  EMAIL: 'email', // 수정
   PASSWORD: 'lock',
 };
 
@@ -35,7 +35,6 @@ const Input = ({ title, placeholder, value, iconName, ...props }) => {
       </Text>
       <TextInput
         {...props}
-        ref={ref}
         style={[
           styles.input,
           isFocused && styles.focusedInput,
@@ -46,7 +45,7 @@ const Input = ({ title, placeholder, value, iconName, ...props }) => {
         autoCapitalize="none"
         autoCorrect={false}
         onFocus={() => setIsFocused(true)}
-        onBlue={() => setIsFocused(false)}
+        onBlur={() => setIsFocused(false)} // 수정
       />
       <View style={styles.icon}>
         <MaterialCommunityIcons
@@ -76,8 +75,8 @@ Input.defaultProps = {
 Input.propTypes = {
   title: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
-  keyboardtype: PropTypes.oneOf(Object.values(KeyboardTypes)),
-  returnkeytype: PropTypes.oneOf(Object.values(ReturnKeyTypes)),
+  keyboardType: PropTypes.oneOf(Object.values(KeyboardTypes)), // 수정
+  returnKeyType: PropTypes.oneOf(Object.values(ReturnKeyTypes)), // 수정
   secureTextEntry: PropTypes.bool,
   value: PropTypes.string,
   iconName: PropTypes.oneOf(Object.values(IconNames)),
